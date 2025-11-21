@@ -1,21 +1,42 @@
 <?php
+session_start();
 require 'config.php';
-if (!isset($_SESSION['user_id'])) { header("Location: login.php"); exit; }
 
-// Fetch users
-$users = $conn->query("SELECT id, username FROM users")->fetchAll(PDO::FETCH_ASSOC);
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit;
+}
 
-// Fetch services
-$services = $conn->query("SELECT id, service_name FROM services")->fetchAll(PDO::FETCH_ASSOC);
+// ================= Fetch users =================
+$usersResult = $conn->query("SELECT id, username FROM users ORDER BY username ASC");
+$users = [];
+while ($row = $usersResult->fetch_assoc()) {
+    $users[] = $row;
+}
 
+// ================= Fetch services =================
+$servicesResult = $conn->query("SELECT id, name FROM services ORDER BY name ASC");
+$services = [];
+while ($row = $servicesResult->fetch_assoc()) {
+    $services[] = $row;
+}
+
+// ================= Handle POST =================
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user_id = $_POST['user_id'];
     $service_id = $_POST['service_id'];
-    $booking_date = $_POST['booking_date'];
+    $datetime = $_POST['date']; // datetime-local input
+
+    // Split datetime-local into date + time
+    $date = date("Y-m-d", strtotime($datetime));
+    $time = date("H:i:s", strtotime($datetime));
+
     $status = $_POST['status'];
 
-    $stmt = $conn->prepare("INSERT INTO bookings (user_id, service_id, booking_date, status) VALUES (?, ?, ?, ?)");
-    $stmt->execute([$user_id, $service_id, $booking_date, $status]);
+    // Insert using mysqli
+    $stmt = $conn->prepare("INSERT INTO bookings (user_id, service_id, date, time, status, created_at) VALUES (?, ?, ?, ?, ?, NOW())");
+    $stmt->bind_param("iisss", $user_id, $service_id, $date, $time, $status);
+    $stmt->execute();
 
     header("Location: bookings.php");
     exit;
@@ -32,6 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <h2>Add Booking</h2>
 
 <form method="post">
+
     <label>User:</label>
     <select name="user_id" class="form-control mb-3" required>
         <option value="">Select User</option>
@@ -44,12 +66,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <select name="service_id" class="form-control mb-3" required>
         <option value="">Select Service</option>
         <?php foreach ($services as $s): ?>
-            <option value="<?= $s['id'] ?>"><?= htmlspecialchars($s['service_name']) ?></option>
+            <option value="<?= $s['id'] ?>"><?= htmlspecialchars($s['name']) ?></option>
         <?php endforeach; ?>
     </select>
 
-    <label>Date:</label>
-    <input type="datetime-local" name="booking_date" class="form-control mb-3" required>
+    <label>Date & Time:</label>
+    <input type="datetime-local" name="date" class="form-control mb-3" required>
 
     <label>Status:</label>
     <select name="status" class="form-control mb-3">

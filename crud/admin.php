@@ -10,14 +10,20 @@ if (!isset($_SESSION['user_id'])) {
 
 // ==================== Fetch Bookings ====================
 $bookings = $conn->query("
-    SELECT b.id, u.username AS customer_name, s.name AS service_name, s.price,
-       b.booking_datetime, b.status
-FROM bookings b
-JOIN users u ON b.user_id = u.id
-JOIN services s ON b.service_id = s.id
-ORDER BY b.booking_datetime DESC
-
+    SELECT 
+        b.id,
+        u.username AS customer_name,
+        s.name AS service_name,
+        s.price,
+        b.date,
+        b.time,
+        b.created_at
+    FROM bookings b
+    JOIN users u ON b.user_id = u.id
+    JOIN services s ON b.service_id = s.id
+    ORDER BY b.date DESC, b.time DESC
 ");
+
 
 // ==================== Fetch Services ====================
 $services = $conn->query("SELECT * FROM services ORDER BY name ASC");

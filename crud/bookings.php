@@ -1,16 +1,25 @@
 <?php
+session_start();
 require 'config.php';
-if (!isset($_SESSION['user_id'])) { header("Location: login.php"); exit; }
+
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit;
+}
 
 // Fetch bookings joined with user + service
 $stmt = $conn->query("
-    SELECT b.id, u.username, s.service_name, b.booking_date, b.status
+    SELECT 
+        b.id, 
+        u.username, 
+        s.name AS service_name,
+        b.date,
+        b.status
     FROM bookings b
     JOIN users u ON b.user_id = u.id
     JOIN services s ON b.service_id = s.id
-    ORDER BY b.booking_date DESC
+    ORDER BY b.date DESC
 ");
-$bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html>
@@ -36,12 +45,12 @@ $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </tr>
     </thead>
     <tbody>
-        <?php foreach ($bookings as $b): ?>
+        <?php while ($b = $stmt->fetch_assoc()): ?>
         <tr>
             <td><?= $b['id'] ?></td>
             <td><?= htmlspecialchars($b['username']) ?></td>
             <td><?= htmlspecialchars($b['service_name']) ?></td>
-            <td><?= $b['booking_date'] ?></td>
+            <td><?= $b['date'] ?></td>
             <td><?= $b['status'] ?></td>
             <td>
                 <a href="bookings_edit.php?id=<?= $b['id'] ?>" class="btn btn-sm btn-warning">Edit</a>
@@ -49,7 +58,7 @@ $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
                    onclick="return confirm('Delete this booking?');">Delete</a>
             </td>
         </tr>
-        <?php endforeach; ?>
+        <?php endwhile; ?>
     </tbody>
 </table>
 
