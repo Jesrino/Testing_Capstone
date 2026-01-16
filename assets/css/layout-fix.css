@@ -1,0 +1,406 @@
+/* layout-fix.css - place near top of main CSS */
+:root {
+  --site-bg: #f7f6e6; /* keep your theme */
+}
+
+/* Make page a column layout so main grows and footer stays bottom */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.site-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* ensures footer can be pushed down */
+  background: var(--site-bg);
+}
+
+
+.site-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.site-footer {
+  flex: 0 0 auto;
+  background: linear-gradient(180deg, rgba(40,80,40,0.95), rgba(50,90,50,0.95));
+  color: #fff;
+  padding: 28px 40px;
+  box-sizing: border-box;
+}
+
+.site-footer .footer-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.footer-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.footer-col h3,
+.footer-col h4 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  color: white;
+}
+
+.footer-col p,
+.footer-col ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.footer-col ul li {
+  margin-bottom: 8px;
+}
+
+.footer-col a {
+  color: #fff;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.footer-col a:hover {
+  opacity: 0.8;
+}
+
+.social-links {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.social-links a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.social-links a:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.contact-list li strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.newsletter-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.newsletter-form input {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.newsletter-form button {
+  padding: 8px 16px;
+  background: #556B2F;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.newsletter-form button:hover {
+  background: #454321;
+}
+
+/* small screens: stack vertically */
+@media (max-width: 900px) {
+  .site-footer .footer-inner {
+    grid-template-columns: 1fr;
+  }
+  .site-root { min-height: 100vh; }
+  .header-nav { padding: 8px 12px; }
+}
+
+/* button spacing and hero area fix if necessary */
+.hero {
+  padding: 48px 32px;
+  box-sizing: border-box;
+}
+
+/* ensure no element accidentally fills full height */
+* {
+  box-sizing: border-box;
+}
+
+/* Clear any previous rules that forced footer to 100vh */
+.site-footer[style], footer[style] {
+  /* Prevent inline style misuse; only applies when inline style exists */
+  min-height: unset !important;
+  height: auto !important;
+  position: relative !important;
+}
+
+/* ============================
+   FIXED SIDEBAR LAYOUT
+   ============================ */
+
+/* Main layout structure */
+.site-root {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Desktop layout with push sidebar */
+@media (min-width: 901px) {
+    .site-root {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    .sidenav {
+        width: 0;
+        overflow: hidden;
+        transition: width 0.3s ease;
+        background: linear-gradient(180deg, #005f73, #0a9396);
+        flex-shrink: 0;
+        position: fixed;
+        height: 100vh;
+        z-index: 999;
+    }
+
+    .sidenav.open {
+        width: 260px;
+    }
+
+    .site-main {
+        flex: 1;
+        margin-left: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .container {
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 2rem !important;
+        box-sizing: border-box;
+    }
+
+    .sidenav-toggle {
+        display: block;
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        z-index: 1001;
+        background: #3b82f6;
+        border: none;
+        border-radius: 6px;
+        padding: 8px;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .sidenav-toggle.open {
+        left: 275px; /* 15px + 260px */
+        transition: left 0.3s ease;
+    }
+}
+
+/* Mobile layout with push sidebar */
+@media (max-width: 900px) {
+    .site-root {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    .sidenav {
+        width: 0;
+        overflow: hidden;
+        transition: width 0.3s ease;
+        background: linear-gradient(180deg, #005f73, #0a9396);
+        flex-shrink: 0;
+        position: fixed;
+        height: 100vh;
+        z-index: 999;
+    }
+
+    .sidenav.open {
+        width: 200px;
+    }
+
+    .site-main {
+        flex: 1;
+        margin-left: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .container {
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 1rem !important;
+        box-sizing: border-box;
+    }
+
+    .sidenav-toggle {
+        display: block;
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        z-index: 1001;
+        background: #3b82f6;
+        border: none;
+        border-radius: 6px;
+        padding: 8px;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .sidenav-toggle.open {
+        left: 215px; /* 15px + 200px */
+        transition: left 0.3s ease;
+    }
+}
+
+
+/* Sidebar links */
+.sidenav-nav .sidenav-link {
+    display: block;
+    padding: 14px 25px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 17px;
+}
+
+.sidenav-nav .sidenav-link:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+/* Logo inside the sidebar */
+.sidenav-header {
+    padding: 20px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* ============================
+     CONTENT FIX — THE IMPORTANT PART
+   ============================ */
+
+/* Header stays above sidebar */
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 1001;
+}
+
+/* ============================
+   MOBILE RESPONSIVE FIX
+   ============================ */
+@media (max-width: 900px) {
+    .sidenav {
+        transform: translateX(-100%);
+    }
+
+    .sidenav.open {
+        transform: translateX(0);
+    }
+
+    .site-main.with-sidebar {
+        margin-left: 0 !important;
+    }
+
+    .sidenav-toggle {
+        position: fixed;
+        left: 15px;
+        top: 80px;
+        z-index: 2000;
+        background: none;
+        border: none;
+    }
+
+    .sidenav-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 1500;
+    }
+
+    .sidenav-overlay.active {
+        display: block;
+    }
+}
+/* Sidebar collapsed */
+.sidenav.collapsed {
+    width: 80px;
+}
+
+.site-main.sidebar-collapsed {
+    margin-left: 80px;
+}
+
+/* Extra small screens (mobile phones) */
+@media (max-width: 480px) {
+    html, body {
+        font-size: 14px;
+    }
+    
+    .site-header {
+        padding: 0.75rem;
+        flex-wrap: wrap;
+    }
+    
+    .logo img {
+        height: 28px;
+    }
+    
+    .nav {
+        gap: 8px;
+        padding: 8px 0;
+        font-size: 0.9rem;
+    }
+    
+    .container {
+        padding: 1rem !important;
+    }
+    
+    .sidenav-toggle {
+        padding: 6px;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .site-footer {
+        padding: 1rem;
+    }
+    
+    .site-footer .footer-inner {
+        gap: 1rem;
+    }
+}
+
